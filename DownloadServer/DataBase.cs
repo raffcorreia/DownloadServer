@@ -3,7 +3,7 @@ using System.Data;
 using System.Configuration;
 using MySql.Data.MySqlClient;
 
-namespace DownloadServe
+namespace DownloadServer
 {
     public static class DataBase
     {

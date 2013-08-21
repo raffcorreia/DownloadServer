@@ -7,18 +7,18 @@ using System.Web.UI.WebControls;
 using System.Data;
 using System.IO;
 
-namespace DownloadServe
+namespace DownloadServer
 {
     public partial class Default : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            loadGrid();    
+            loadGrid();
         }
-        
+
         private void loadGrid()
         {
-            DirectoryInfo di = new DirectoryInfo(Request.PhysicalApplicationPath + "\\files\\");
+            DirectoryInfo di = new DirectoryInfo(Configuration.FilesPath);
             FileInfo[] files = di.GetFiles("*.*", SearchOption.TopDirectoryOnly);
 
             List<Item> itemsList = new List<Item>();

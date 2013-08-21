@@ -5,7 +5,7 @@ using System.Web;
 using System.Text;
 using System.Collections.Specialized;
 
-namespace DownloadServe
+namespace DownloadServer
 {
     public static class DownloadCount
     {

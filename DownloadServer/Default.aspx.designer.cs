@@ -7,7 +7,7 @@
 // </gerado automaticamente>
 //------------------------------------------------------------------------------
 
-namespace DownloadServe {
+namespace DownloadServer {
     
     
     public partial class Default {
