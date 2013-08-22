@@ -1,83 +1,81 @@
 ﻿using System;
 using System.Web;
 using System.IO;
+using System.Web.SessionState;
 
 namespace DownloadServer
 {
-    public class DownloadHandler : IHttpHandler
-    {
+    public class DownloadHandler : IHttpHandler, IRequiresSessionState 
+    {                                             
         public void ProcessRequest(HttpContext context)
         {
+            const long packSize = 65536;
             string fileName = context.Request.Url.Segments[context.Request.Url.Segments.Length - 1];
-            context.ApplicationInstance.CompleteRequest();
-            string filePath = Configuration.FilesPath;
-            FileStream file = null;
+            FileStream file;
+            long offset = 0;
+            long rangeBegin = 0;
+            long rangeEnd = 0;
+            long dataTransfered = 0;
+            long fileSize = 0;
 
-            if (File.Exists(filePath + fileName))
+            if (File.Exists(Configuration.FilesPath + fileName))
             {
-                file = new FileStream(filePath + fileName, FileMode.Open, FileAccess.Read);
-
                 context.Response.Clear();
 
-                long byteIni = 0;
-                long byteEnd = file.Length - 1;
+                file = new FileStream(Configuration.FilesPath + fileName, FileMode.Open, FileAccess.Read);
 
-                CalculateRange(context.Request, file.Length, ref byteIni, ref byteEnd);
+                fileSize = file.Length;
+                rangeBegin = 0;
+                rangeEnd = file.Length - 1;
+
+                CalculateRange(context.Request, file.Length, ref rangeBegin, ref rangeEnd);
 
                 //If isn't range
-                if (byteIni == 0 && byteEnd == file.Length)
+                if (rangeBegin == 0 && (rangeEnd == file.Length -1))
                 {
                     context.Response.StatusCode = 200;
                 }
                 else
                 {
-                    context.Response.AppendHeader("Content-Range", "bytes " + byteIni + "-" + byteEnd + "/" + file.Length.ToString());
+                    context.Response.AppendHeader("Content-Range", "bytes " + rangeBegin + "-" + rangeEnd + "/" + file.Length.ToString());
                     context.Response.StatusCode = 206;
                 }
 
                 context.Response.AppendHeader("Content-Length", file.Length.ToString());
-                FileInfo fi = new FileInfo(filePath + fileName);
-                context.Response.AppendHeader("Last-Modified", fi.LastAccessTimeUtc.ToString());
+                context.Response.AppendHeader("Last-Modified", File.GetLastAccessTimeUtc(Configuration.FilesPath + fileName).ToString());
                 context.Response.AppendHeader("Accept-Ranges", "bytes");
                 context.Response.AppendHeader("ETag", "id_test");
                 context.Response.ContentType = "application/octet-stream";
 
-                if (context.Request.HttpMethod.Equals("HEAD"))
-                {
-                    //Only asking for the head so, exit! But need a LOG
-                }
-                else
+                if (!context.Request.HttpMethod.Equals("HEAD"))
                 {
                     context.Response.Flush();
 
-                    long offset = byteIni;
+                    offset = rangeBegin;
                     int readCount;
-                    byte[] buffer = new Byte[65536];
-                    while (context.Response.IsClientConnected && offset < byteEnd)
+                    byte[] buffer = new Byte[packSize];
+                    file.Seek(offset, SeekOrigin.Begin);
+                    while (context.Response.IsClientConnected && offset < rangeEnd)
                     {
-                        file.Seek(offset, SeekOrigin.Begin);
-
-                        readCount = file.Read(buffer, 0, (int)Math.Min(byteEnd - byteIni, buffer.Length));
+                        readCount = file.Read(buffer, 0, (int)Math.Min(rangeEnd - rangeBegin, buffer.Length));
 
                         context.Response.OutputStream.Write(buffer, 0, readCount);
                         context.Response.Flush();
 
                         offset += readCount;
-                        buffer = new Byte[25000];
+                        dataTransfered += readCount;
                     }
-                }
-                if (context.Response.IsClientConnected)
-                {
-                    //DownloadCount.AddDownload(context.Request.ServerVariables, fileName);
                 }
                 file.Dispose();
                 file.Close();
-                context.Response.End();
             }
             else
             {
                 context.Response.StatusCode = 404;
             }
+
+            DownloadCount.AddDownload(context, fileName, fileSize, dataTransfered, rangeBegin, rangeEnd);
+            context.Response.End();
         }
 
         private void CalculateRange(HttpRequest request, long fileSize, ref long byteIni, ref long byteEnd)

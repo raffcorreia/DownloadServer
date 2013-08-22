@@ -10,19 +10,40 @@ namespace DownloadServer
     public static class DownloadCount
     {
 
-        public static int AddDownload(NameValueCollection ServerVariables, String fileName)
+        public static int AddDownload(HttpContext context, String fileName, long fileSize, long bytesTransfered, long rangeBegin, long rangeEnd)
         {
             StringBuilder sql = new StringBuilder();
+            string sessionId = "";
 
-            sql.Append("INSERT INTO tb_FWM_downloads  VALUES ( ");
+            if (context.Session != null)
+            {
+                try
+                {
+                    sessionId = context.Session.SessionID;
+                }
+                catch(Exception)
+                {
+                    sessionId = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss.fff");
+                }
+            }
+
+            sql.Append("INSERT INTO ");
+            sql.Append(Configuration.DataBaseTablesPrefix + "downloads  VALUES ( ");
             sql.Append("NULL, ");
             sql.Append("NOW(), ");
             sql.Append("'" + fileName + "', ");
-            sql.Append("'" + ServerVariables["REMOTE_ADDR"] + "', ");
-            sql.Append("'" + ServerVariables["REMOTE_HOST"] + "', ");
-            sql.Append("'" + ServerVariables["HTTP_ACCEPT_LANGUAGE"] + "', ");
-            sql.Append("'" + ServerVariables["HTTP_HOST"] + "', ");
-            sql.Append("'" + ServerVariables["HTTP_USER_AGENT"] + "' ");
+            sql.Append(fileSize.ToString() + ", ");
+            sql.Append(bytesTransfered.ToString() + ", ");
+            sql.Append(rangeBegin.ToString() + ", ");
+            sql.Append(rangeEnd.ToString() + ", ");
+            sql.Append(context.Response.StatusCode.ToString() + ", ");
+            sql.Append("'" + context.Request.HttpMethod.Equals("HEAD").ToString() + "', ");
+            sql.Append("'" + sessionId + "', ");
+            sql.Append("'" + context.Request.ServerVariables["REMOTE_ADDR"] + "', ");
+            sql.Append("'" + context.Request.ServerVariables["REMOTE_HOST"] + "', ");
+            sql.Append("'" + context.Request.ServerVariables["HTTP_ACCEPT_LANGUAGE"] + "', ");
+            sql.Append("'" + context.Request.ServerVariables["HTTP_HOST"] + "', ");
+            sql.Append("'" + context.Request.ServerVariables["HTTP_USER_AGENT"] + "' ");
             sql.Append(")");
 
             return DataBase.ExecuteNonQuery(sql.ToString());
@@ -35,7 +56,7 @@ namespace DownloadServer
             {
                 where = " WHERE file_name = '" + fileName + "'";
             }
-            return DataBase.ExecuteScalarInt("SELECT COUNT(id) FROM tb_FWM_downloads" + where);
+            return DataBase.ExecuteScalarInt("SELECT COUNT(id) FROM " + Configuration.DataBaseTablesPrefix + "downloads" + where);
         }
     }
 }

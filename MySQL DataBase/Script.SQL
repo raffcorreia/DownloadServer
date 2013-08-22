@@ -6,6 +6,20 @@ CREATE TABLE `tb_downloads` (
 
   `file_name` varchar(50) NOT NULL,
 
+  `file_size` bigint NOT NULL,
+
+  `bytes_transfered` bigint NOT NULL,
+
+  `range_bytes_begin` bigint NOT NULL,
+
+  `range_bytes_end` bigint NOT NULL,
+
+  `status_code` int(11) NOT NULL,
+
+  `is_only_head` bit NOT NULL,
+
+  `SessionID` varchar(50) NOT NULL,
+
   `REMOTE_ADDR` varchar(20) DEFAULT NULL,
 
   `REMOTE_HOST` varchar(20) DEFAULT NULL,
