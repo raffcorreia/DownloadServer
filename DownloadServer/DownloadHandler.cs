@@ -9,7 +9,7 @@ namespace DownloadServer
     {                                             
         public void ProcessRequest(HttpContext context)
         {
-            const long packSize = 65536;
+            const long packSize = 20000;// 65536;
             string fileName = context.Request.Url.Segments[context.Request.Url.Segments.Length - 1];
             FileStream file;
             long offset = 0;

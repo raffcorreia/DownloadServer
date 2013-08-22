@@ -25,7 +25,7 @@ namespace DownloadServer
             }
 
             sql.Append("INSERT INTO ");
-            sql.Append(Configuration.DataBaseTablesPrefix + "downloads  VALUES ( ");
+            sql.Append("tb_" + Configuration.DataBaseTablesPrefix + "downloads  VALUES ( ");
             sql.Append("NULL, ");
             sql.Append("NOW(), ");
             sql.Append("'" + fileName + "', ");
@@ -53,7 +53,7 @@ namespace DownloadServer
             {
                 where = " WHERE file_name = '" + fileName + "'";
             }
-            return DataBase.ExecuteScalarInt("SELECT COUNT(id) FROM " + Configuration.DataBaseTablesPrefix + "downloads" + where);
+            return DataBase.ExecuteScalarInt("SELECT total FROM vw_" + Configuration.DataBaseTablesPrefix + "downloads_per_file" + where);
         }
     }
 }
