@@ -18,6 +18,18 @@ namespace DownloadServer
             long dataTransfered = 0;
             long fileSize = 0;
 
+            if (context.Session != null)
+            {
+                try
+                {
+                    context.Session.Add("ID", context.Session.SessionID);
+                }
+                catch (Exception)
+                {
+                    context.Session.Add("ID", DownloadCount.CountDownload().ToString());
+                }
+            }
+            
             if (File.Exists(Configuration.FilesPath + fileName))
             {
                 context.Response.Clear();
@@ -26,12 +38,12 @@ namespace DownloadServer
 
                 fileSize = file.Length;
                 rangeBegin = 0;
-                rangeEnd = file.Length - 1;
+                rangeEnd = file.Length;
 
                 CalculateRange(context.Request, file.Length, ref rangeBegin, ref rangeEnd);
 
                 //If isn't range
-                if (rangeBegin == 0 && (rangeEnd == file.Length -1))
+                if (rangeBegin == 0 && (rangeEnd == file.Length))
                 {
                     context.Response.StatusCode = 200;
                 }
@@ -92,7 +104,7 @@ namespace DownloadServer
                     {
                         if (values[1] != "")
                         {
-                            byteEnd = Math.Min(long.Parse(values[1]), fileSize - 1);
+                            byteEnd = Math.Min(long.Parse(values[1]), fileSize);
                         }
                     }
                 }

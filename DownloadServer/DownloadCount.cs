@@ -15,16 +15,13 @@ namespace DownloadServer
             StringBuilder sql = new StringBuilder();
             string sessionId = "";
 
-            if (context.Session != null)
+            try
             {
-                try
-                {
-                    sessionId = context.Session.SessionID;
-                }
-                catch(Exception)
-                {
-                    sessionId = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss.fff");
-                }
+                sessionId = context.Session.SessionID;
+            }
+            catch(Exception)
+            {
+                sessionId = CountDownload().ToString();
             }
 
             sql.Append("INSERT INTO ");
@@ -49,7 +46,7 @@ namespace DownloadServer
             return DataBase.ExecuteNonQuery(sql.ToString());
         }
 
-        public static int CountDownload(String fileName)
+        public static int CountDownload(String fileName = "")
         {
             string where = "";
             if (fileName != "")
