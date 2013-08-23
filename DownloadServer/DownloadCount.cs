@@ -51,9 +51,9 @@ namespace DownloadServer
             string where = "";
             if (fileName != "")
             {
-                where = " WHERE file_name = '" + fileName + "'";
+                where = "WHERE file_name = '" + fileName + "'";
             }
-            return DataBase.ExecuteScalarInt("SELECT total FROM vw_" + Configuration.DataBaseTablesPrefix + "downloads_per_file" + where);
+            return DataBase.ExecuteScalarInt("SELECT SUM(total) FROM vw_" + Configuration.DataBaseTablesPrefix + "downloads_per_file " + where);
         }
     }
 }

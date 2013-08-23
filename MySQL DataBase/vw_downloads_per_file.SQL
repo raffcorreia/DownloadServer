@@ -1,5 +1,5 @@
 CREATE VIEW `simpledownloadcounter`.`vw_downloads_per_file` AS
-SELECT	file_name, SUM(bytes_transfered) as bytes_transfered, SUM(file_size) as file_size, 
-		TRUNCATE(SUM(total), 0) as total
-FROM	vw_downloads_raw
+SELECT	file_name, SUM(bytes_transfered) as bytes_transfered, SUM(file_size) as total_size,
+		TRUNCATE((SUM(bytes_transfered) / file_size), 0) as total
+FROM	tb_downloads
 GROUP BY file_name
