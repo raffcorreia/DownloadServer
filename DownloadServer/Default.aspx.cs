@@ -11,9 +11,14 @@ namespace DownloadServer
 {
     public partial class Default : System.Web.UI.Page
     {
+        DownloadCount dc;
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            dc = new DownloadCount();
             loadGrid();
+            lblDownloadsCount.Text = dc.CountDownload().ToString();
         }
 
         private void loadGrid()
@@ -25,16 +30,11 @@ namespace DownloadServer
 
             foreach (FileInfo d in files)
             {
-                itemsList.Add(new Item(d.Name, CountDownload(d.Name)));
+                itemsList.Add(new Item(d.Name, dc.CountDownload(d.Name)));
             }
 
             GridView1.DataSource = itemsList;
             GridView1.DataBind();
-        }
-
-        protected int CountDownload(String file)
-        {
-            return DownloadCount.CountDownload(file);
         }
     }
 }

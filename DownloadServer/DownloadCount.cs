@@ -7,10 +7,16 @@ using System.Collections.Specialized;
 
 namespace DownloadServer
 {
-    public static class DownloadCount
+    public class DownloadCount
     {
+        DataBase db;
 
-        public static int AddDownload(HttpContext context, String fileName, long fileSize, long bytesTransfered, long rangeBegin, long rangeEnd)
+        public DownloadCount()
+        {
+            db = new DataBase();
+        }
+
+        public int AddDownload(HttpContext context, String fileName, long fileSize, long bytesTransfered, long rangeBegin, long rangeEnd)
         {
             StringBuilder sql = new StringBuilder();
             string sessionId = "";
@@ -43,17 +49,17 @@ namespace DownloadServer
             sql.Append("'" + context.Request.ServerVariables["HTTP_USER_AGENT"] + "' ");
             sql.Append(")");
 
-            return DataBase.ExecuteNonQuery(sql.ToString());
+            return db.ExecuteNonQuery(sql.ToString());
         }
 
-        public static int CountDownload(String fileName = "")
+        public int CountDownload(String fileName = "")
         {
             string where = "";
             if (fileName != "")
             {
                 where = "WHERE file_name = '" + fileName + "'";
             }
-            return DataBase.ExecuteScalarInt("SELECT SUM(total) FROM vw_" + Configuration.DataBaseTablesPrefix + "downloads_per_file " + where);
+            return db.ExecuteScalarInt("SELECT SUM(total) FROM vw_" + Configuration.DataBaseTablesPrefix + "downloads_per_file " + where);
         }
     }
 }

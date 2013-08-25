@@ -9,7 +9,8 @@
 <body>
     <form id="form1" runat="server">
         <div>
-            Number of downloads: <% Response.Write(CountDownload("").ToString()); %> <br />
+            Number of downloads:<asp:Label ID="lblDownloadsCount" runat="server" Text="0"></asp:Label>
+            <br />
         </div>
         <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False">
             <Columns>

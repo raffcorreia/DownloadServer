@@ -9,6 +9,7 @@ namespace DownloadServer
     {                                             
         public void ProcessRequest(HttpContext context)
         {
+            DownloadCount dc = new DownloadCount();
             const long packSize = 20000;// 65536;
             string fileName = context.Request.Url.Segments[context.Request.Url.Segments.Length - 1];
             FileStream file;
@@ -26,7 +27,7 @@ namespace DownloadServer
                 }
                 catch (Exception)
                 {
-                    context.Session.Add("ID", DownloadCount.CountDownload().ToString());
+                    context.Session.Add("ID", dc.CountDownload().ToString());
                 }
             }
             
@@ -86,15 +87,17 @@ namespace DownloadServer
                 context.Response.StatusCode = 404;
             }
 
-            DownloadCount.AddDownload(context, fileName, fileSize, dataTransfered, rangeBegin, rangeEnd);
+            dc.AddDownload(context, fileName, fileSize, dataTransfered, rangeBegin, rangeEnd);
             context.Response.End();
         }
 
         private void CalculateRange(HttpRequest request, long fileSize, ref long byteIni, ref long byteEnd)
         {
-            try
+            string rangeParam = request.Headers.Get("Range");
+
+            if (rangeParam != null)
             {
-                string[] range = request.Headers["Range"].Split('=');
+                string[] range = rangeParam.Split('=');
                 if (range[0].ToLower() == "bytes" && range.Length > 1)
                 {
                     string[] values = range[1].Split('-');
@@ -108,10 +111,6 @@ namespace DownloadServer
                         }
                     }
                 }
-            }
-            catch (Exception)
-            {
-
             }
         }
 

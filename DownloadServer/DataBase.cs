@@ -5,20 +5,28 @@ using MySql.Data.MySqlClient;
 
 namespace DownloadServer
 {
-    public static class DataBase
+    public class DataBase
     {
-        private static string connectionString = ConfigurationManager.ConnectionStrings["MySqlConnectionString"].ConnectionString;
-        private static MySqlCommand cmd;
-        private static MySqlConnection con;
+        private string connectionString = ConfigurationManager.ConnectionStrings["MySqlConnectionString"].ConnectionString;
+        private MySqlCommand cmd;
+        private MySqlConnection con;
 
-        private static bool openConnection() 
+        private bool openConnection() 
         {
             try
             {
-                con = new MySqlConnection(connectionString);
-                cmd = con.CreateCommand();
-                con.Open();
-
+                if (con == null)
+                {
+                    con = new MySqlConnection(connectionString);
+                }
+                if (cmd == null)
+                {
+                    cmd = con.CreateCommand();
+                }
+                if (con.State != ConnectionState.Open)
+                {
+                    con.Open();
+                }
                 return true;
             }
             catch (Exception)
@@ -29,7 +37,7 @@ namespace DownloadServer
             }
         }
 
-        private static bool closeConnection()
+        private bool closeConnection()
         {
             try
             {
@@ -50,7 +58,7 @@ namespace DownloadServer
             return true;
         }
 
-        public static int ExecuteNonQuery(string sql)
+        public int ExecuteNonQuery(string sql)
         {
             int ret;
 
@@ -74,7 +82,7 @@ namespace DownloadServer
             return ret;
         }
 
-        public static object ExecuteScalar(string sql)
+        public object ExecuteScalar(string sql)
         {
             object ret = null;
 
@@ -94,31 +102,30 @@ namespace DownloadServer
             return ret;
         }
 
-        public static int ExecuteScalarInt(string sql)
+        public int ExecuteScalarInt(string sql)
         {
-            int ret;            
+            int ret = -1;
 
             if (openConnection())
             {
                 try
                 {
                     cmd.CommandText = sql;
-                    ret = int.Parse(cmd.ExecuteScalar().ToString()); 
-                    return ret;
+                    int.TryParse(cmd.ExecuteScalar().ToString(), out ret);
                 }
                 catch (Exception)
                 {
-
+                    
                 }
             }
             closeConnection();
-            return 0;
+            return ret;
         }
 
 
-        public static DataSet ExecuteDataSet(string sql)
+        public DataSet ExecuteDataSet(string sql)
         {
-            DataSet ret =null;
+            DataSet ret = null;
             MySqlDataAdapter da;
             
             if (openConnection())
