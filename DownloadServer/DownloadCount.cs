@@ -40,7 +40,7 @@ namespace DownloadServer
             sql.Append(rangeBegin.ToString() + ", ");
             sql.Append(rangeEnd.ToString() + ", ");
             sql.Append(context.Response.StatusCode.ToString() + ", ");
-            sql.Append("'" + context.Request.HttpMethod.Equals("HEAD").ToString() + "', ");
+            sql.Append(Convert.ToUInt16(context.Request.HttpMethod.Equals("HEAD")) + ", ");
             sql.Append("'" + sessionId + "', ");
             sql.Append("'" + context.Request.ServerVariables["REMOTE_ADDR"] + "', ");
             sql.Append("'" + context.Request.ServerVariables["REMOTE_HOST"] + "', ");
