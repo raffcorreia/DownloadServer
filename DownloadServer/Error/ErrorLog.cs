@@ -44,6 +44,7 @@ namespace DownloadServer.Error
 
         private void recordLOG()
         {
+            DateTime eventTime = DateTime.UtcNow;
             string date = DateTime.UtcNow.ToString("yyyy_MM_dd");
             string time = DateTime.UtcNow.TimeOfDay.ToString();
             string msg = "";
@@ -51,15 +52,19 @@ namespace DownloadServer.Error
             if (exception != null)
             {
                 msg = exception.Message;
+
+                if (status != 404)
+                {
+                    recordDetail(eventTime, exception, Request.Url.AbsoluteUri);
+                }
             }
 
-            recordSummary(date, time, msg);
-            recordDetail();
+            recordSummary(eventTime, msg);
         }
 
-        private void recordSummary(string date, string time, string msg)
+        private void recordSummary(DateTime eventTime, string msg)
         {
-            string fileURL = Configuration.LOGPath + "Summary_" + date + "{0}.config";
+            string fileURL = Configuration.LOGPath + "Summary_" + DateTime.UtcNow.ToString("yyyy_MM_dd") + "{0}.config";
             FileInfo fi = new FileInfo(String.Format(fileURL, ""));
             string namecomplement = "";
             
@@ -87,33 +92,27 @@ namespace DownloadServer.Error
             }
 
             StreamWriter sw = new StreamWriter(String.Format(fileURL, namecomplement), true);
-            sw.WriteLine(time + "; Status= " + status.ToString("###") + "; UserIP= " + Request.UserHostAddress + "; Message= " + msg + "; URL= " + Request.Url.AbsoluteUri);
+            sw.WriteLine(DateTime.UtcNow.TimeOfDay.ToString() + "; Status= " + status.ToString("###") + "; UserIP= " + Request.UserHostAddress + "; Message= " + msg + "; URL= " + Request.Url.AbsoluteUri);
             sw.Flush();
             sw.Close();
         }
 
-        private void recordDetail()
+        private void recordDetail(DateTime eventTime, Exception ex, string url)
         {
-            //StreamWriter swDetail = new StreamWriter(Configuration.LOGPath + time.Replace(":", "_") + ".config", true);
-            //swDetail.WriteLine("Message:       " + exception.Message);
-            //swDetail.WriteLine("HashCode:      " + exception.GetHashCode());
-            //swDetail.WriteLine("TargetSite:    " + exception.TargetSite);
-            //swDetail.WriteLine("Source:        " + exception.Source);
-            //swDetail.WriteLine("Type:          " + exception.GetType());
-            //swDetail.WriteLine("Data:          ");
-            //swDetail.WriteLine("               " + String.Join(" - ", exception.Data));  // .Aggregate(new StringBuilder(), (sb, x) => sb.Append(x.Key + keyValueSeparator + x.Value + sequenceSeparator), sb => sb.ToString(0, sb.Length - 1)); 
-
-            ////swDetail.WriteLine("Data:          ");
-            ////for (int i = 0; i < exception.Data.Count; i++)
-            ////{
-            ////    swDetail.WriteLine("               " + exception.Data);
-            ////}
-
-            //swDetail.WriteLine("BaseException: " + exception.GetBaseException());
-            //swDetail.WriteLine("StackTrace:");
-            //swDetail.Write(exception.StackTrace);
-            //swDetail.Flush();
-            //swDetail.Close();
+            StreamWriter swDetail = new StreamWriter(Configuration.LOGPath + eventTime.ToString("yyyy_MM_dd") + "_" + eventTime.ToString("HH_mm_ss_fffffff") + ".config", true);
+            swDetail.WriteLine("url:           " + url);
+            swDetail.WriteLine("Message:       " + exception.Message);
+            swDetail.WriteLine("HashCode:      " + exception.GetHashCode());
+            swDetail.WriteLine("TargetSite:    " + exception.TargetSite);
+            swDetail.WriteLine("Source:        " + exception.Source);
+            swDetail.WriteLine("Type:          " + exception.GetType());
+            swDetail.WriteLine("Data:          ");
+            swDetail.WriteLine("               " + String.Join(" - ", exception.Data));
+            swDetail.WriteLine("BaseException: " + exception.GetBaseException());
+            swDetail.WriteLine("StackTrace:");
+            swDetail.Write(exception.StackTrace);
+            swDetail.Flush();
+            swDetail.Close();
         }
 
         public string GetErrorMessage()
