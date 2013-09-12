@@ -84,6 +84,7 @@ namespace DownloadServer
             }
             else
             {
+                Error.ErrorLog err = new Error.ErrorLog(new Exception("Filename = " + Configuration.FilesPath + fileName), context.Request);
                 context.Response.StatusCode = 404;
             }
 

@@ -61,6 +61,7 @@
     <Content Include="Error\Oops.aspx" />
     <Content Include="files\file1.png" />
     <Content Include="files\file2.bmp" />
+    <Content Include="Global.asax" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -90,6 +91,9 @@
     </Compile>
     <Compile Include="Error\Oops.aspx.designer.cs">
       <DependentUpon>Oops.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Item.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
