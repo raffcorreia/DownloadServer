@@ -60,11 +60,14 @@ namespace DownloadServer
             try
             {
                 FileExtension = Request["fileextension"].ToUpper();
-                FileExtension = FileExtension.Replace('.', '\0');
+                if (FileExtension == "")
+                {
+                    FileExtension = "*";
+                }
             }
             catch (Exception)
             {
-                FileExtension = "";
+                FileExtension = "*";
             }
             try
             {
@@ -84,32 +87,32 @@ namespace DownloadServer
         private void loadGrid()
         {
             List<Item> itemsList = new List<Item>();
-            FileInfo[] files;
-            
+            string[] files;
+
+            string name;
+
             try
             {
-                DirectoryInfo di = new DirectoryInfo(Configuration.FilesPath + "\\" + SubFolder + "\\");
-                files = di.GetFiles("*.*", SearchOption.TopDirectoryOnly);
+                files = Directory.GetFiles(Configuration.FilesPath + "\\" + SubFolder + "\\", FileExtension, SearchOption.TopDirectoryOnly);
 
                 if (OrderBy == "ASC")
                 {
-                    Array.Sort(files, (a, b) => a.Name.CompareTo(b.Name));
-                    //files = files.OrderBy(x => x.Name);
+                    Array.Sort(files);
                 }
                 else
                 {
                     Array.Reverse(files);
-                    //files.OrderByDescending(x => x.Name);
-                }
-                foreach (FileInfo d in files)
-                {
-                    itemsList.Add(new Item(d.Name, GetDownloadCount(d.Name)));
                 }
 
+                for (int x = 0; x < files.Length; x++)
+                {
+                    name = files[x].Substring(files[x].LastIndexOf('\\')+1);
+                    itemsList.Add(new Item(name, GetDownloadCount(name)));
+                }
             }
             catch (Exception)
-            {
-
+            { 
+            
             }
 
             GridView1.DataSource = itemsList;

@@ -49,13 +49,13 @@
             SUBFOLDER iFrame ORDERING BY DESC
         </h2>
 
-        <iframe src="FileList.aspx?subfolder=ex1&orderby=desc&bgcolor=LightGrey&showdownloadcount=false" width="400" height="250" frameborder="0">
+        <iframe src="FileList.aspx?subfolder=ex1&orderby=desc&bgcolor=LightGrey&fileextension=*.png&showdownloadcount=false" width="400" height="250" frameborder="0">
         </iframe>
 
         <h2>
             SUBFOLDER iFrame FILTERING FILE EXTENSION
         </h2>
-        <iframe src="FileList.aspx?subfolder=ex2&orderby=asc&bgcolor=LightGrey&fileextension=bmp&showdownloadcount=true" width="400" height="250" frameborder="0">
+        <iframe src="FileList.aspx?subfolder=ex2&orderby=asc&bgcolor=LightGrey&fileextension=*.bmp&showdownloadcount=true" width="400" height="250" frameborder="0">
         </iframe>
 
     </form>
