@@ -27,7 +27,7 @@ namespace DownloadServer
             }
             catch(Exception)
             {
-                sessionId = CountDownload().ToString();
+                sessionId = Count().ToString();
             }
 
             sql.Append("INSERT INTO ");
@@ -52,7 +52,7 @@ namespace DownloadServer
             return db.ExecuteNonQuery(sql.ToString());
         }
 
-        public int CountDownload(String fileName = "")
+        public int Count(String fileName = "")
         {
             string where = "";
             if (fileName != "")

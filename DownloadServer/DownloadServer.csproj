@@ -59,6 +59,7 @@
   <ItemGroup>
     <Content Include="Default.aspx" />
     <Content Include="Error\Oops.aspx" />
+    <Content Include="FileList.aspx" />
     <Content Include="files\file1.png" />
     <Content Include="files\file2.bmp" />
     <Content Include="Global.asax" />
@@ -91,6 +92,13 @@
     </Compile>
     <Compile Include="Error\Oops.aspx.designer.cs">
       <DependentUpon>Oops.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FileList.aspx.cs">
+      <DependentUpon>FileList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FileList.aspx.designer.cs">
+      <DependentUpon>FileList.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

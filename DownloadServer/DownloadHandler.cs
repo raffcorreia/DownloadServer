@@ -27,7 +27,7 @@ namespace DownloadServer
                 }
                 catch (Exception)
                 {
-                    context.Session.Add("ID", dc.CountDownload().ToString());
+                    context.Session.Add("ID", dc.Count().ToString());
                 }
             }
             

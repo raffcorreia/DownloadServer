@@ -18,19 +18,27 @@ namespace DownloadServer
         {
             dc = new DownloadCount();
             loadGrid();
-            lblDownloadsCount.Text = dc.CountDownload().ToString();
+            lblDownloadsCount.Text = dc.Count().ToString();
         }
 
         private void loadGrid()
         {
-            DirectoryInfo di = new DirectoryInfo(Configuration.FilesPath);
-            FileInfo[] files = di.GetFiles("*.*", SearchOption.TopDirectoryOnly);
-
             List<Item> itemsList = new List<Item>();
 
-            foreach (FileInfo d in files)
+            try
             {
-                itemsList.Add(new Item(d.Name, dc.CountDownload(d.Name)));
+                DirectoryInfo di = new DirectoryInfo(Configuration.FilesPath);
+                FileInfo[] files = di.GetFiles("*.*", SearchOption.TopDirectoryOnly);
+
+                foreach (FileInfo d in files)
+                {
+                    itemsList.Add(new Item(d.Name, dc.Count(d.Name)));
+                }
+
+            }
+            catch (Exception)
+            {
+
             }
 
             GridView1.DataSource = itemsList;
