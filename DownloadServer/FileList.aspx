@@ -9,7 +9,7 @@
 <body id="body" runat="server">
     <form id="form1" runat="server">
         <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" 
-            BorderWidth="0px" GridLines="None">
+            BorderWidth="0px" GridLines="None" ShowHeader="False">
             <Columns>
                 <asp:HyperLinkField
                         DataNavigateUrlFields="File"

@@ -49,7 +49,7 @@
             SUBFOLDER iFrame ORDERING BY DESC
         </h2>
 
-        <iframe src="FileList.aspx?subfolder=ex1&orderby=desc&bgcolor=LightGrey&fileextension=*.png&showdownloadcount=false" width="400" height="250" frameborder="0">
+        <iframe src="FileList.aspx?subfolder=ex1&orderby=desc&bgcolor=%23EEEEEE&fileextension=*.png&showdownloadcount=false" width="400" height="250" frameborder="0">
         </iframe>
 
         <h2>

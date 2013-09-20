@@ -109,14 +109,13 @@ namespace DownloadServer
                     name = files[x].Substring(files[x].LastIndexOf('\\')+1);
                     itemsList.Add(new Item(name, GetDownloadCount(name)));
                 }
+                GridView1.DataSource = itemsList;
+                GridView1.DataBind();           
             }
             catch (Exception)
-            { 
-            
-            }
+            {
 
-            GridView1.DataSource = itemsList;
-            GridView1.DataBind();
+            }
         }
 
         private int GetDownloadCount(string name)
